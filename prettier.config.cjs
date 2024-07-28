@@ -1,5 +1,6 @@
 /** @type {import("prettier").Config} */
 module.exports = {
+  arrowParens: "avoid",
   printWidth: 100,
   quoteProps: "consistent",
   singleQuote: false,

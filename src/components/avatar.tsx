@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useMemo } from "react";
-import { cn } from "~/utils";
+import { cn } from "~/lib/utils";
 
 export const Avatar = (props: {
   size: "sm" | "md" | "lg" | "xl";
@@ -11,7 +11,7 @@ export const Avatar = (props: {
       props.user &&
       props.user.name
         .split(" ")
-        .map((n) => n[0]?.toLocaleUpperCase())
+        .map(n => n[0]?.toLocaleUpperCase())
         .slice(0, 2)
         .join(""),
     [props.user],
@@ -19,7 +19,7 @@ export const Avatar = (props: {
 
   return (
     <div
-      className={cn("bg-white relative rounded-full", {
+      className={cn("relative rounded-full bg-white", {
         "h-10 w-10": props.size === "sm",
         "h-12 w-12": props.size === "md",
         "h-16 w-16": props.size === "lg",

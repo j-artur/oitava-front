@@ -2,9 +2,9 @@ import { FC } from "react";
 
 export const Footer: FC = () => {
   return (
-    <div className="bg-white flex h-20 shrink-0 items-center justify-between p-4 text-sm">
+    <div className="flex h-20 shrink-0 flex-col-reverse items-center justify-between overflow-auto bg-bg-white p-4 text-sm md:flex-row">
       <div>
-        <p className="text-text-normal">© 2024 Clínica Oitava Rosado</p>
+        <p className="text-text-secondary">© 2024 Clínica Oitava Rosado</p>
       </div>
       <div className="flex gap-4">
         <p>Feedback</p>

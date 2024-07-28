@@ -6,6 +6,13 @@ const config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1490px",
+      },
+    },
     extend: {
       colors: {
         bg: {
@@ -16,11 +23,14 @@ const config = {
         border: {
           light: "#F1F3F5",
           dark: "#E9ECEF",
+          darker: "#D0D5DD",
         },
         text: {
-          light: "#495057",
-          normal: "#3C465A",
-          dark: "#212529",
+          accent: "#0f172a",
+          primary: "#1e293b",
+          secondary: "#334155",
+          tertiary: "#475569",
+          label: "#747C80",
         },
         primary: {
           light: "#66DBBF",
@@ -28,9 +38,15 @@ const config = {
           dark: "#0F8982",
           darker: "#0A7275",
         },
+        destructive: {
+          bg: "#FEE2E2",
+          hover: "#FECACA",
+          border: "#EF4444",
+          text: "#EF4444",
+        },
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
 export default config;

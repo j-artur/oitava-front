@@ -13,24 +13,27 @@ import {
   HiOutlineUserCircle,
   HiOutlineUserGroup,
 } from "react-icons/hi2";
-import { cn } from "~/utils";
+import { cn } from "~/lib/utils";
 
 export const Sidenav: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
-      className={cn("border-border-dark flex flex-col overflow-hidden border-r transition-all", {
-        "w-16": !isOpen,
-        "w-1/6 min-w-48": isOpen,
-      })}
+      className={cn(
+        "absolute left-0 top-0 z-50 flex h-full shrink-0 flex-col overflow-hidden border-r border-border-dark bg-bg-white transition-[width]",
+        {
+          "w-16": !isOpen,
+          "w-80": isOpen,
+        },
+      )}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <div className="border-border-dark grow flex-col border-b">
+      <div className="grow flex-col border-b border-border-dark">
         <div className="flex h-40 shrink-0 items-center justify-center">
           {isOpen ? (
-            <Image src="/logo.png" width={170} height={55} alt="Oitava Rosado" />
+            <Image src="/logo.png" width={180} height={60} alt="Oitava Rosado" />
           ) : (
             <Image src="/logo-image.png" width={60} height={60} alt="Oitava Rosado" />
           )}
@@ -72,24 +75,24 @@ type NavItemProps = {
   isOpen: boolean;
 };
 
-const NavItem: FC<NavItemProps> = (props) => {
+const NavItem: FC<NavItemProps> = props => {
   const pathname = usePathname();
 
   return (
     <a href={props.href} className="flex">
       <li
         className={cn(
-          "border-transparent text-text-normal flex h-12 flex-1 items-center gap-2 border-r-2 border-t px-6",
+          "flex h-12 flex-1 items-center gap-2 border-r-2 border-t border-transparent px-6 text-text-secondary",
           "hover:bg-bg-hover",
           {
-            "border-t-border-light border-r-primary-light bg-bg-active font-semibold text-primary-normal":
+            "border-r-primary-light border-t-border-light bg-bg-active font-semibold text-primary-normal":
               pathname === props.href,
           },
         )}
       >
         <props.icon size={20} className="shrink-0" />
         <p
-          className={cn("overflow-hidden transition-all", {
+          className={cn("overflow-hidden transition-[width]", {
             "w-full": props.isOpen,
             "w-0": !props.isOpen,
           })}
