@@ -20,7 +20,7 @@ import { storeToken } from "~/services/token";
 
 const formSchema = z.object({
   email: z.string().email("E-mail inválido"),
-  senha: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+  senha: z.string().min(3, "Senha deve ter no mínimo 3 caracteres"),
 });
 
 const SignIn: FC = () => {
@@ -60,7 +60,7 @@ const SignIn: FC = () => {
   });
 
   const noErrors = Object.keys(formState.errors).length === 0;
-  const disabled = !noErrors || !formState.isDirty || signInMutation.isPending;
+  const disabled = !noErrors || signInMutation.isPending;
 
   return (
     <div className="flex h-full max-w-96 flex-col gap-8">

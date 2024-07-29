@@ -13,6 +13,7 @@ export const UsersTable: FC = () => {
 
   return (
     <DataTable
+      isLoading={users.isLoading}
       cols={["ID", "Nome", "E-mail"]}
       data={
         users.data?.map(user => ({

@@ -13,13 +13,13 @@ export async function getDoctor(id: number) {
   return res.data;
 }
 
-export async function createDoctor(data: Omit<Doctor, "id">) {
+export async function createDoctor(data: Omit<Doctor, "id" | "agendamentos">) {
   const res = await api.post<Doctor>("/doctors", data);
 
   return res.data;
 }
 
-export async function updateDoctor(id: number, data: Omit<Doctor, "id">) {
+export async function updateDoctor(id: number, data: Omit<Doctor, "id" | "agendamentos">) {
   const res = await api.put<Doctor>(`/doctors/${id}`, data);
 
   return res.data;

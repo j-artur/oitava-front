@@ -3,6 +3,7 @@
 import { ReactNode, useMemo, useState } from "react";
 import { HiArrowLongDown, HiMagnifyingGlass } from "react-icons/hi2";
 import { cn } from "~/lib/utils";
+import { ActivityIndicator } from "./activity-indicator";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Pagination } from "./ui/pagination";
@@ -12,6 +13,7 @@ type Id = string | number;
 type Data<TCols extends string> = Record<TCols, {}> & { id: Id };
 
 type Props<TData extends Data<TCols>, TCols extends string> = Readonly<{
+  isLoading: boolean;
   data: TData[];
   cols: TCols[];
   customRender?: Partial<Record<TCols, (data: TData) => ReactNode>>;
@@ -73,6 +75,7 @@ export function DataTable<TData extends Data<TCols>, TCols extends string>(
             <HiMagnifyingGlass className="absolute left-3 top-3" size={16} />
           </div>
           <div className="flex items-center justify-end gap-2 lg:grow">
+            {props.isLoading && <ActivityIndicator />}
             <p className="text-xs font-medium">Informações apresentadas por página:</p>
             <Select
               className="w-20"

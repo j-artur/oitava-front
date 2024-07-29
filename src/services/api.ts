@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getToken } from "./token";
 
 const api = axios.create({
@@ -17,6 +17,15 @@ api.interceptors.request.use(
   },
   error => {
     return Promise.reject(error);
+  },
+);
+
+api.interceptors.response.use(
+  res => res,
+  error => {
+    if (error instanceof AxiosError) {
+      return Promise.reject(error.response?.data ?? "Erro desconhecido");
+    }
   },
 );
 

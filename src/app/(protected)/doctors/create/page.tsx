@@ -1,45 +1,57 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Breadcrumbs from "~/components/breadcrumbs";
 import { CreateForm, FormSection } from "~/components/create-form";
-import { Cbo, Conselho, cpfMask, descricaoCbo, Uf } from "~/lib/utils";
+import { Cbo, cepMask, Conselho, cpfMask, descricaoCbo, telefoneMask, Uf } from "~/lib/utils";
+import { createDoctor } from "~/services/doctor";
 import { ControlledInput } from "../../controlled-input";
 import { ControlledSelect } from "../../controlled-select";
 
 const formSchema = z.object({
-  nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  nome: z.string().min(1, "Nome é obrigatório"),
   conselho: z.nativeEnum(Conselho, { message: "Selecione uma opção" }),
   conselhoUf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
   conselhoNum: z.string().min(1, "Número do conselho é obrigatório"),
-  cbo: z.nativeEnum(Cbo, { message: "Selecione uma opção" }).nullable(),
-  cpf: z.string().length(11, "CPF inválido"),
-  logradouro: z.string(),
-  bairro: z.string(),
-  numero: z.string(),
-  cidade: z.string(),
+  cbo: z.nativeEnum(Cbo, { message: "Selecione uma opção" }),
+  cpf: z
+    .string()
+    .length(14, "CPF inválido")
+    .transform(value => value.replace(/\D/g, "")),
+  logradouro: z.string().min(1, "Logradouro é obrigatório"),
+  bairro: z.string().min(1, "Bairro é obrigatório"),
+  numero: z.string().min(1, "Número é obrigatório"),
+  cidade: z.string().min(1, "Cidade é obrigatório"),
   uf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
-  cep: z.string().length(8, "CEP inválido"),
-  telefone: z.string().length(11, "Telefone inválido"),
+  cep: z
+    .string()
+    .length(9, "CEP inválido")
+    .transform(value => value.replace(/\D/g, "")),
+  telefone: z
+    .string()
+    .length(15, "Telefone inválido")
+    .transform(value => value.replace(/\D/g, "")),
   email: z.string().email("Email inválido"),
 });
 
 export default function CreateDoctor() {
-  const { control, handleSubmit } = useForm({
+  const { control, formState, handleSubmit } = useForm({
     defaultValues: {
       nome: "",
-      conselho: null,
-      conselhoUf: null,
+      conselho: null as unknown as Conselho,
+      conselhoUf: null as unknown as Uf,
       conselhoNum: "",
-      cbo: null,
+      cbo: null as unknown as Cbo,
       cpf: "",
       logradouro: "",
       bairro: "",
       numero: "",
       cidade: "",
-      uf: null,
+      uf: null as unknown as Uf,
       cep: "",
       telefone: "",
       email: "",
@@ -48,6 +60,19 @@ export default function CreateDoctor() {
     mode: "onBlur",
     reValidateMode: "onChange",
   });
+
+  const router = useRouter();
+
+  const createDoctorMutation = useMutation({
+    mutationKey: ["createDoctor"],
+    mutationFn: async (data: z.infer<typeof formSchema>) => {
+      await createDoctor(data);
+      router.push("/doctors");
+    },
+  });
+
+  const noErrors = Object.keys(formState.errors).length === 0;
+  const disabled = !noErrors || createDoctorMutation.isPending;
 
   return (
     <main className="flex flex-1 flex-col">
@@ -71,6 +96,10 @@ export default function CreateDoctor() {
             <CreateForm
               title="Criar novo médico"
               subtitle="Preencha os campos abaixo para criar um novo médico no sistema"
+              onSubmit={handleSubmit(data => createDoctorMutation.mutate(data))}
+              isLoading={createDoctorMutation.isPending}
+              disabled={disabled}
+              error={createDoctorMutation.error?.message}
             >
               <FormSection title="Informações gerais">
                 <ControlledInput
@@ -155,6 +184,7 @@ export default function CreateDoctor() {
                   name="cep"
                   label="CEP"
                   placeholder="Informe o CEP"
+                  mask={cepMask}
                 />
               </FormSection>
               <FormSection title="Contato">
@@ -163,6 +193,7 @@ export default function CreateDoctor() {
                   name="telefone"
                   label="Telefone"
                   placeholder="Informe um número de telefone"
+                  mask={telefoneMask}
                 />
                 <ControlledInput
                   control={control}

@@ -1,4 +1,4 @@
-import { Sexo } from "./utils";
+import { Cbo, Conselho, Sexo, Uf } from "./utils";
 
 export type User = {
   id: number;
@@ -9,16 +9,16 @@ export type User = {
 export type Doctor = {
   id: number;
   nome: string;
-  conselho: string;
-  conselhoUf: string;
+  conselho: Conselho;
+  conselhoUf: Uf;
   conselhoNum: string;
-  cbo: string | null;
+  cbo: Cbo | null;
   cpf: string;
   logradouro: string;
   bairro: string | null;
   numero: string | null;
   cidade: string | null;
-  uf: string | null;
+  uf: Uf | null;
   cep: string | null;
   telefone: string | null;
   email: string | null;
@@ -29,7 +29,7 @@ export type Patient = {
   id: number;
   nome: string;
   sexo: Sexo;
-  nascimento: string;
+  nascimento: Date;
   cpf: string;
   rg: string;
   orgaoEmissor: string | null;
@@ -37,7 +37,7 @@ export type Patient = {
   bairro: string | null;
   numero: string | null;
   cidade: string | null;
-  uf: string | null;
+  uf: Uf | null;
   cep: string | null;
   telefone: string | null;
   email: string;

@@ -16,9 +16,9 @@ import { signUp } from "~/services/auth";
 
 const formSchema = z
   .object({
-    nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+    nome: z.string().min(1, "Nome é obrigatório"),
     email: z.string().email("E-mail inválido"),
-    senha: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+    senha: z.string().min(3, "Senha deve ter no mínimo 3 caracteres"),
     confirmacaoSenha: z.string(),
   })
   .refine(data => data.senha === data.confirmacaoSenha, {
@@ -55,7 +55,7 @@ const SignUp: FC = () => {
   });
 
   const noErrors = Object.keys(formState.errors).length === 0;
-  const disabled = !noErrors || !formState.isDirty || signUpMutation.isPending;
+  const disabled = !noErrors || signUpMutation.isPending;
 
   return (
     <div className="flex h-full max-w-96 flex-col gap-8">

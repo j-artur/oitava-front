@@ -22,12 +22,19 @@ export const telefoneMask = (value: string) => {
     .replace(/(-\d{4})\d+?$/, "$1");
 };
 
-export const dateMask = (value: string) => {
+export const cepMask = (value: string) => {
   return value
     .replace(/\D/g, "")
-    .replace(/(\d{2})(\d)/, "$1/$2")
-    .replace(/(\d{2})(\d)/, "$1/$2")
-    .replace(/(\d{4})(\d)/, "$1");
+    .replace(/(\d{5})(\d)/, "$1-$2")
+    .replace(/(-\d{3})\d+?$/, "$1");
+};
+
+export const rgMask = (value: string) => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1");
 };
 
 export const Sexo = {
@@ -207,3 +214,9 @@ export const descricaoCbo = {
   "225345": "Médico hiperbarista",
   "225350": "Médico neurofisiologista clínico",
 };
+
+export const appoinmentTimes = Array.from({ length: 11 }, (_, i) => i + 7).flatMap(hour =>
+  Array.from({ length: 4 }, (_, i) => i * 15).map(minute => {
+    return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+  }),
+);

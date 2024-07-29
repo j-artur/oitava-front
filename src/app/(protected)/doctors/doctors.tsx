@@ -1,10 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { FC } from "react";
 import { DataTable } from "~/components/data-table";
+import { DestructiveAlert } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
-import { getDoctors } from "~/services/doctor";
+import { deleteDoctor, getDoctors } from "~/services/doctor";
 
 export const DoctorsTable: FC = () => {
   const doctors = useQuery({
@@ -12,8 +13,17 @@ export const DoctorsTable: FC = () => {
     queryFn: getDoctors,
   });
 
+  const deleteDoctorMutation = useMutation({
+    mutationKey: ["deleteDoctor"],
+    mutationFn: async (id: number) => {
+      await deleteDoctor(id);
+      doctors.refetch();
+    },
+  });
+
   return (
     <DataTable
+      isLoading={doctors.isLoading || deleteDoctorMutation.isPending}
       cols={["ID", "Nome", "Conselho", "Nº", "CBO", "CPF"]}
       data={
         doctors.data?.map(doctor => ({
@@ -33,7 +43,9 @@ export const DoctorsTable: FC = () => {
       actions={doctor => (
         <div className="flex gap-2">
           <Button variant="secondary">Editar</Button>
-          <Button variant="destructive">Excluir</Button>
+          <DestructiveAlert onConfirm={() => deleteDoctorMutation.mutate(doctor.id)}>
+            <Button variant="destructive-outline">Excluir</Button>
+          </DestructiveAlert>
         </div>
       )}
     />

@@ -12,7 +12,7 @@ import { Button } from "~/components/ui/button";
 
 const formSchema = z
   .object({
-    senha: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+    senha: z.string().min(3, "Senha deve ter no mínimo 3 caracteres"),
     confirmacaoSenha: z.string(),
   })
   .refine(data => data.senha === data.confirmacaoSenha, {

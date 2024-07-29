@@ -47,6 +47,7 @@ const config = {
           hover: "#FECACA",
           border: "#EF4444",
           text: "#EF4444",
+          strong: "#DC2626",
         },
       },
     },

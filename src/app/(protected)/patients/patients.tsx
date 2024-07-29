@@ -1,10 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { FC } from "react";
 import { DataTable } from "~/components/data-table";
+import { DestructiveAlert } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
-import { getPatients } from "~/services/patient";
+import { deletePatient, getPatients } from "~/services/patient";
 
 export const PatientsTable: FC = () => {
   const patients = useQuery({
@@ -12,28 +13,42 @@ export const PatientsTable: FC = () => {
     queryFn: getPatients,
   });
 
+  const deletePatientMutation = useMutation({
+    mutationKey: ["deletePatient"],
+    mutationFn: async (id: number) => {
+      await deletePatient(id);
+      patients.refetch();
+    },
+  });
+
   return (
     <DataTable
+      isLoading={patients.isLoading || deletePatientMutation.isPending}
       cols={["ID", "Nome", "CPF", "Telefone", "Sexo", "Nascimento", "Observações"]}
       data={
         patients.data?.map(patient => ({
           id: patient.id,
           ID: patient.id.toString().padStart(4, "0"),
           Nome: patient.nome,
-          CPF: patient.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
-          Telefone: patient.telefone?.replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3") ?? "-",
-          Sexo: patient.sex === Sex.MALE ? "Masculino" : "Feminino",
-          Nascimento: new Date(patient.birthdate).toLocaleDateString("pt-BR"),
-          Observações: patient.observacoes ?? "-",
+          CPF: patient.cpf,
+          Telefone: patient.telefone ?? "",
+          Sexo: patient.sexo,
+          Nascimento: new Date(patient.nascimento).toLocaleDateString("pt-BR", { timeZone: "UTC" }),
+          Observações: patient.observacoes?.split("\n")?.[0] ?? "-",
         })) ?? []
       }
       customRender={{
         ID: patient => <p className="font-semibold text-text-primary">{patient["ID"]}</p>,
+        CPF: patient => patient["CPF"].replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
+        Telefone: patient =>
+          patient["Telefone"].replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3") || "-",
       }}
       actions={patient => (
         <div className="flex gap-2">
           <Button variant="secondary">Editar</Button>
-          <Button variant="destructive">Excluir</Button>
+          <DestructiveAlert onConfirm={() => deletePatientMutation.mutate(patient.id)}>
+            <Button variant="destructive-outline">Excluir</Button>
+          </DestructiveAlert>
         </div>
       )}
     />

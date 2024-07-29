@@ -1,41 +1,55 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Breadcrumbs from "~/components/breadcrumbs";
 import { CreateForm, FormSection } from "~/components/create-form";
-import { cpfMask, Sexo, Uf } from "~/lib/utils";
+import { cepMask, cpfMask, rgMask, Sexo, telefoneMask, Uf } from "~/lib/utils";
+import { createPatient } from "~/services/patient";
+import { ControlledDatePicker } from "../../controlled-datepicker";
 import { ControlledInput } from "../../controlled-input";
 import { ControlledSelect } from "../../controlled-select";
+import { ControlledTextarea } from "../../controlled-textarea";
 
 const formSchema = z.object({
-  nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  nome: z.string().min(1, "Nome é obrigatório"),
   sexo: z.nativeEnum(Sexo, { message: "Selecione uma opção" }),
-  nascimento: z.string(),
+  nascimento: z.date({ message: "Selecione uma data" }),
   cpf: z
     .string()
     .length(14, "CPF inválido")
     .transform(value => value.replace(/\D/g, "")),
-  rg: z.string().length(9, "RG inválido"),
-  orgaoEmissor: z.string(),
-  logradouro: z.string(),
-  bairro: z.string(),
-  numero: z.string(),
-  cidade: z.string(),
+  rg: z
+    .string()
+    .length(11, "RG inválido")
+    .transform(value => value.replace(/\D/g, "")),
+  orgaoEmissor: z.string().min(1, "Órgão emissor é obrigatório"),
+  logradouro: z.string().min(1, "Logradouro é obrigatório"),
+  bairro: z.string().min(1, "Bairro é obrigatório"),
+  numero: z.string().min(1, "Número é obrigatório"),
+  cidade: z.string().min(1, "Cidade é obrigatório"),
   uf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
-  cep: z.string().length(8, "CEP inválido"),
-  telefone: z.string().length(11, "Telefone inválido"),
+  cep: z
+    .string()
+    .length(9, "CEP inválido")
+    .transform(value => value.replace(/\D/g, "")),
+  telefone: z
+    .string()
+    .length(15, "Telefone inválido")
+    .transform(value => value.replace(/\D/g, "")),
   email: z.string().email("Email inválido"),
   observacoes: z.string(),
 });
 
 export default function CreatePatient() {
-  const { control, handleSubmit } = useForm({
+  const { control, formState, handleSubmit } = useForm({
     defaultValues: {
       nome: "",
-      sexo: null,
-      nascimento: "",
+      sexo: null as unknown as Sexo,
+      nascimento: null as unknown as Date,
       cpf: "",
       rg: "",
       orgaoEmissor: "",
@@ -43,7 +57,7 @@ export default function CreatePatient() {
       bairro: "",
       numero: "",
       cidade: "",
-      uf: null,
+      uf: null as unknown as Uf,
       cep: "",
       telefone: "",
       email: "",
@@ -53,6 +67,19 @@ export default function CreatePatient() {
     mode: "onBlur",
     reValidateMode: "onChange",
   });
+
+  const router = useRouter();
+
+  const createPatientMutation = useMutation({
+    mutationKey: ["createPatient"],
+    mutationFn: async (data: z.infer<typeof formSchema>) => {
+      await createPatient(data);
+      router.push("/patients");
+    },
+  });
+
+  const noErrors = Object.keys(formState.errors).length === 0;
+  const disabled = !noErrors || createPatientMutation.isPending;
 
   return (
     <main className="flex flex-1 flex-col">
@@ -76,6 +103,9 @@ export default function CreatePatient() {
             <CreateForm
               title="Criar novo paciente"
               subtitle="Preencha os campos abaixo para criar um novo paciente no sistema"
+              onSubmit={handleSubmit(data => createPatientMutation.mutate(data))}
+              isLoading={createPatientMutation.isPending}
+              disabled={disabled}
             >
               <FormSection title="Informações gerais">
                 <ControlledInput
@@ -92,11 +122,11 @@ export default function CreatePatient() {
                   dataValue={value => value}
                   render={value => value}
                 />
-                <ControlledInput
+                <ControlledDatePicker
                   control={control}
                   name="nascimento"
                   label="Data de nascimento"
-                  placeholder="Informe a data de nascimento do paciente"
+                  mode="far"
                 />
                 <ControlledInput
                   control={control}
@@ -110,6 +140,7 @@ export default function CreatePatient() {
                   name="rg"
                   label="RG"
                   placeholder="Informe o RG do paciente"
+                  mask={rgMask}
                 />
                 <ControlledInput
                   control={control}
@@ -156,6 +187,7 @@ export default function CreatePatient() {
                   name="cep"
                   label="CEP"
                   placeholder="Informe o CEP"
+                  mask={cepMask}
                 />
               </FormSection>
               <FormSection title="Contato">
@@ -164,6 +196,7 @@ export default function CreatePatient() {
                   name="telefone"
                   label="Telefone"
                   placeholder="Informe um número de telefone"
+                  mask={telefoneMask}
                 />
                 <ControlledInput
                   control={control}
@@ -172,7 +205,15 @@ export default function CreatePatient() {
                   placeholder="Informe um e-mail válido"
                 />
               </FormSection>
-              <FormSection title="Observações">{null}</FormSection>
+              <FormSection title="Observações">
+                <ControlledTextarea
+                  control={control}
+                  name="observacoes"
+                  label="Observações"
+                  placeholder="Escreva aqui suas observações"
+                  className="col-span-3"
+                />
+              </FormSection>
             </CreateForm>
           </div>
         </div>

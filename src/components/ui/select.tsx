@@ -147,6 +147,16 @@ type Props<TData> = {
   onBlur?: () => void;
 };
 
+export {
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectRoot,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+};
+
 export const Select = <TData,>(props: Props<TData>) => {
   const [selected, setSelected] = React.useState(props.value);
 

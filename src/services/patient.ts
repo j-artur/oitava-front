@@ -13,13 +13,13 @@ export async function getPatient(id: number) {
   return res.data;
 }
 
-export async function createPatient(data: Omit<Patient, "id">) {
+export async function createPatient(data: Omit<Patient, "id" | "agendamentos">) {
   const res = await api.post<Patient>("/patients", data);
 
   return res.data;
 }
 
-export async function updatePatient(id: number, data: Omit<Patient, "id">) {
+export async function updatePatient(id: number, data: Omit<Patient, "id" | "agendamentos">) {
   const res = await api.put<Patient>(`/patients/${id}`, data);
 
   return res.data;
