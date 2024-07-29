@@ -9,24 +9,25 @@ import { Pagination } from "./ui/pagination";
 import { Select } from "./ui/select";
 
 type Id = string | number;
-type Data = Record<string, {}> & { id: Id };
+type Data<TCols extends string> = Record<TCols, {}> & { id: Id };
 
-type Props<TData extends Data, TCols extends string> = Readonly<{
+type Props<TData extends Data<TCols>, TCols extends string> = Readonly<{
   data: TData[];
-  render: Record<TCols, (data: TData) => ReactNode>;
+  cols: TCols[];
+  customRender: Partial<Record<TCols, (data: TData) => ReactNode>>;
   actions?: (data: TData) => ReactNode;
 }>;
 
 const quantityOptions = [10, 25, 50, 100];
 
-export function Table<TData extends Data, TCols extends string>(props: Props<TData, TCols>) {
-  const cols = Object.keys(props.render);
-
+export function DataTable<TData extends Data<TCols>, TCols extends string>(
+  props: Props<TData, TCols>,
+) {
   const [pageSize, setPageSize] = useState(quantityOptions[0]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
-  const [orderBy, setOrderBy] = useState<TCols>(cols[0] as TCols);
+  const [orderBy, setOrderBy] = useState<TCols>(props.cols[0] as TCols);
 
   const totalPages = Math.ceil(props.data.length / pageSize);
 
@@ -62,7 +63,7 @@ export function Table<TData extends Data, TCols extends string>(props: Props<TDa
     <div className="flex w-full flex-col gap-4">
       <div className="flex w-full flex-col rounded-xl border bg-bg-white">
         <div className="flex w-full flex-col justify-between gap-4 border-b border-border-light p-6 md:flex-row">
-          <div className="relative flex">
+          <div className="relative flex md:grow">
             <Input
               className="w-full min-w-0 pl-9"
               placeholder="Pesquisar"
@@ -71,7 +72,7 @@ export function Table<TData extends Data, TCols extends string>(props: Props<TDa
             />
             <HiMagnifyingGlass className="absolute left-3 top-3" size={16} />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2 md:grow">
             <p className="text-xs font-medium">Informações apresentadas por página:</p>
             <Select
               className="w-20"
@@ -86,7 +87,7 @@ export function Table<TData extends Data, TCols extends string>(props: Props<TDa
           <table className="w-full">
             <thead>
               <tr>
-                {cols.map(col => (
+                {props.cols.map(col => (
                   <th key={col} className="overflow-auto p-0">
                     <Button
                       variant="ghost"
@@ -133,13 +134,15 @@ export function Table<TData extends Data, TCols extends string>(props: Props<TDa
                   key={row?.id ?? "empty_" + i}
                   className="h-14 border-t border-border-dark text-text-tertiary last:rounded-b-xl odd:bg-bg-active"
                 >
-                  {Object.entries<(data: TData) => ReactNode>(props.render).map(([col, fn]) => (
+                  {props.cols.map(col => (
                     <td
                       key={col}
                       className="max-w-48 overflow-auto truncate p-4"
-                      title={row ? row[col].toString() : ""}
+                      title={row ? row[col as TCols].toString() : ""}
                     >
-                      {row ? (fn(row) ?? row[col].toString()) : null}
+                      {row
+                        ? (props.customRender[col]?.(row) ?? row[col as TCols].toString())
+                        : null}
                     </td>
                   ))}
                   {props.actions ? (

@@ -212,12 +212,12 @@ export default function Doctors() {
                 </p>
               </div>
               <div className="flex">
-                <Button variant="primary">Novo Médico</Button>
+                <Button variant="primary-outline">Novo Médico</Button>
               </div>
             </div>
           </div>
           <div className="w-full md:w-4/5">
-            <DoctorsTable data={doctors} />
+            <DoctorsTable />
           </div>
         </div>
       </div>

@@ -6,8 +6,8 @@ export async function signIn(email: string, senha: string) {
   return res.data;
 }
 
-export async function signUp(email: string, senha: string) {
-  const res = await api.post<User>("/signup", { email, senha });
+export async function signUp(nome: string, email: string, senha: string) {
+  const res = await api.post<User>("/signup", { nome, email, senha });
   return res.data;
 }
 

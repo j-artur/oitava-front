@@ -19,11 +19,13 @@ const config = {
           white: "#ffffff",
           active: "#F9FAFB",
           hover: "#F4F6F8",
+          input: "#F8F9FA",
         },
         border: {
           light: "#F1F3F5",
           dark: "#E9ECEF",
           darker: "#D0D5DD",
+          checkbox: "#B4BFC5",
         },
         text: {
           accent: "#0f172a",
@@ -31,6 +33,7 @@ const config = {
           secondary: "#334155",
           tertiary: "#475569",
           label: "#747C80",
+          eye: "#B1B7BA",
         },
         primary: {
           light: "#66DBBF",

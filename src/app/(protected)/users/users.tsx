@@ -2,7 +2,7 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { FC } from "react";
-import { Table } from "~/components/table";
+import { DataTable } from "~/components/data-table";
 import { getUsers } from "~/services/user";
 
 export const UsersTable: FC = () => {
@@ -13,17 +13,18 @@ export const UsersTable: FC = () => {
 
   return (
     users.data && (
-      <Table
+      <DataTable
+        cols={["Nome", "ID Usuário", "E-mail"]}
         data={users.data.map(user => ({
           "id": user.id,
           "Nome": user.nome,
-          "ID": user.id.toString().padStart(4, "0"),
+          "ID Usuário": user.id.toString().padStart(4, "0"),
           "E-mail": user.email,
         }))}
-        render={{
-          "Nome": user => user["Nome"],
-          "ID": user => <p className="font-semibold text-text-primary">{user["ID"]}</p>,
-          "E-mail": user => user["E-mail"],
+        customRender={{
+          "ID Usuário": user => (
+            <p className="font-semibold text-text-primary">{user["ID Usuário"]}</p>
+          ),
         }}
       />
     )
