@@ -1,16 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Breadcrumbs from "~/components/breadcrumbs";
 import { FormContainer, FormSection } from "~/components/form-container";
 import { Cbo, cepMask, Conselho, cpfMask, descricaoCbo, telefoneMask, Uf } from "~/lib/utils";
-import { createDoctor } from "~/services/doctor";
-import { ControlledInput } from "../../controlled-input";
-import { ControlledSelect } from "../../controlled-select";
+import { getDoctor, updateDoctor } from "~/services/doctor";
+import { ControlledInput } from "../../../controlled-input";
+import { ControlledSelect } from "../../../controlled-select";
 
 const formSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -39,20 +40,23 @@ const formSchema = z.object({
   email: z.string().email("Email inválido"),
 });
 
-export default function CreateDoctor() {
-  const { control, formState, handleSubmit } = useForm({
+export default function UpdateDoctor() {
+  const params = useParams();
+  const id = Number(params.id);
+
+  const { control, formState, setValue, handleSubmit } = useForm({
     defaultValues: {
       nome: "",
       conselho: null as unknown as Conselho,
       conselhoUf: null as unknown as Uf,
       conselhoNum: "",
-      cbo: null as unknown as Cbo,
+      cbo: null as Cbo | null,
       cpf: "",
       logradouro: "",
       bairro: "",
       numero: "",
       cidade: "",
-      uf: null as unknown as Uf,
+      uf: null as Uf | null,
       cep: "",
       telefone: "",
       email: "",
@@ -62,18 +66,42 @@ export default function CreateDoctor() {
     reValidateMode: "onChange",
   });
 
+  const doctor = useQuery({
+    queryKey: ["doctor", id],
+    queryFn: () => getDoctor(id),
+  });
+
+  useEffect(() => {
+    if (doctor.data) {
+      setValue("nome", doctor.data.nome);
+      setValue("conselho", doctor.data.conselho);
+      setValue("conselhoUf", doctor.data.conselhoUf);
+      setValue("conselhoNum", doctor.data.conselhoNum);
+      setValue("cbo", doctor.data.cbo);
+      setValue("cpf", cpfMask(doctor.data.cpf));
+      setValue("logradouro", doctor.data.logradouro ?? "");
+      setValue("bairro", doctor.data.bairro ?? "");
+      setValue("numero", doctor.data.numero ?? "");
+      setValue("cidade", doctor.data.cidade ?? "");
+      setValue("uf", doctor.data.uf);
+      setValue("cep", cepMask(doctor.data.cep ?? ""));
+      setValue("telefone", telefoneMask(doctor.data.telefone ?? ""));
+      setValue("email", doctor.data.email ?? "");
+    }
+  }, [doctor.data, setValue]);
+
   const router = useRouter();
 
-  const createDoctorMutation = useMutation({
-    mutationKey: ["createDoctor"],
+  const updateDoctorMutation = useMutation({
+    mutationKey: ["updateDoctor"],
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      await createDoctor(data);
+      await updateDoctor(id, data);
       router.push("/doctors");
     },
   });
 
   const noErrors = Object.keys(formState.errors).length === 0;
-  const disabled = !noErrors || createDoctorMutation.isPending;
+  const disabled = !noErrors || updateDoctorMutation.isPending;
 
   return (
     <main className="flex flex-1 flex-col">
@@ -87,7 +115,7 @@ export default function CreateDoctor() {
                 <Breadcrumbs
                   path={[
                     { route: "/doctors", label: "Médicos" },
-                    { route: "/doctors/create", label: "Criar novo médico" },
+                    { route: "/doctors/update", label: "Editar médico" },
                   ]}
                 />
               </div>
@@ -95,12 +123,12 @@ export default function CreateDoctor() {
           </div>
           <div className="w-full pt-2 lg:w-3/4">
             <FormContainer
-              title="Criar novo médico"
-              subtitle="Preencha os campos abaixo para criar um novo médico no sistema"
-              onSubmit={handleSubmit(data => createDoctorMutation.mutate(data))}
-              isLoading={createDoctorMutation.isPending}
+              title="Editar médico"
+              subtitle="Edite os campos abaixo para atualizar o médico no sistema"
+              onSubmit={handleSubmit(data => updateDoctorMutation.mutate(data))}
+              isLoading={updateDoctorMutation.isPending}
               disabled={disabled}
-              error={createDoctorMutation.error?.message}
+              error={updateDoctorMutation.error?.message}
             >
               <FormSection title="Informações gerais">
                 <ControlledInput

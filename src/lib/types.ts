@@ -14,7 +14,7 @@ export type Doctor = {
   conselhoNum: string;
   cbo: Cbo | null;
   cpf: string;
-  logradouro: string;
+  logradouro: string | null;
   bairro: string | null;
   numero: string | null;
   cidade: string | null;
@@ -47,9 +47,7 @@ export type Patient = {
 
 export type Appointment = {
   id: number;
-  medicoId: number;
   medico: Doctor;
-  pacienteId: number;
   paciente: Patient;
   motivo: string;
   dataHora: Date;

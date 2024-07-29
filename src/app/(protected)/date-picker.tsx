@@ -16,7 +16,7 @@ type Props = {
   mode: "near" | "far";
 };
 
-export const DatePicker: React.FC<Props> = props => {
+export const DatePicker = React.forwardRef<HTMLElement, Props>((props, ref) => {
   const year = new Date().getFullYear();
 
   return (
@@ -53,4 +53,5 @@ export const DatePicker: React.FC<Props> = props => {
       </PopoverContent>
     </Popover>
   );
-};
+});
+DatePicker.displayName = "DatePicker";

@@ -11,6 +11,7 @@ type Props<TForm extends Record<string, unknown>, TData> = {
   data: TData[];
   dataValue: (data: TData) => string | number;
   render: (data: TData) => React.ReactNode;
+  disabled?: boolean;
 };
 
 export function ControlledSelect<TForm extends Record<string, unknown>, TData>({
@@ -20,12 +21,13 @@ export function ControlledSelect<TForm extends Record<string, unknown>, TData>({
   data,
   dataValue,
   render,
+  disabled,
 }: Props<TForm, TData>) {
   return (
     <Controller
       control={control}
       name={name as Path<TForm>}
-      render={({ field: { value, onChange, ...fieldProps }, fieldState }) => (
+      render={({ field: { value, onChange, ref: _, ...fieldProps }, fieldState }) => (
         <div className="flex flex-col gap-1">
           <div className="relative">
             {label && (
@@ -42,11 +44,12 @@ export function ControlledSelect<TForm extends Record<string, unknown>, TData>({
               </label>
             )}
             <Select<TData>
-              value={(value as TData) ?? (undefined as TData)}
+              value={data.find(d => dataValue(d) === value)}
               data={data}
               dataValue={dataValue}
               render={render}
               onChange={value => onChange(dataValue(value))}
+              disabled={disabled}
               {...fieldProps}
             />
           </div>

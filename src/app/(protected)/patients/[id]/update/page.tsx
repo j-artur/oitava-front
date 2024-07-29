@@ -1,27 +1,33 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Breadcrumbs from "~/components/breadcrumbs";
 import { FormContainer, FormSection } from "~/components/form-container";
-import { Cbo, cepMask, Conselho, cpfMask, descricaoCbo, telefoneMask, Uf } from "~/lib/utils";
-import { createDoctor } from "~/services/doctor";
-import { ControlledInput } from "../../controlled-input";
-import { ControlledSelect } from "../../controlled-select";
+import { cepMask, cpfMask, rgMask, Sexo, telefoneMask, Uf } from "~/lib/utils";
+import { getPatient, updatePatient } from "~/services/patient";
+import { ControlledDatePicker } from "../../../controlled-datepicker";
+import { ControlledInput } from "../../../controlled-input";
+import { ControlledSelect } from "../../../controlled-select";
+import { ControlledTextarea } from "../../../controlled-textarea";
 
 const formSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  conselho: z.nativeEnum(Conselho, { message: "Selecione uma opção" }),
-  conselhoUf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
-  conselhoNum: z.string().min(1, "Número do conselho é obrigatório"),
-  cbo: z.nativeEnum(Cbo, { message: "Selecione uma opção" }).nullable(),
+  sexo: z.nativeEnum(Sexo, { message: "Selecione uma opção" }),
+  nascimento: z.date({ message: "Selecione uma data" }),
   cpf: z
     .string()
     .length(14, "CPF inválido")
     .transform(value => value.replace(/\D/g, "")),
+  rg: z
+    .string()
+    .length(11, "RG inválido")
+    .transform(value => value.replace(/\D/g, "")),
+  orgaoEmissor: z.string().min(1, "Órgão emissor é obrigatório"),
   logradouro: z.string(),
   bairro: z.string(),
   numero: z.string(),
@@ -37,43 +43,73 @@ const formSchema = z.object({
     .length(15, "Telefone inválido")
     .transform(value => value.replace(/\D/g, "")),
   email: z.string().email("Email inválido"),
+  observacoes: z.string(),
 });
 
-export default function CreateDoctor() {
-  const { control, formState, handleSubmit } = useForm({
+export default function UpdatePatient() {
+  const params = useParams();
+  const id = Number(params.id);
+
+  const { control, formState, setValue, handleSubmit } = useForm({
     defaultValues: {
       nome: "",
-      conselho: null as unknown as Conselho,
-      conselhoUf: null as unknown as Uf,
-      conselhoNum: "",
-      cbo: null as unknown as Cbo,
+      sexo: null as unknown as Sexo,
+      nascimento: null as unknown as Date,
       cpf: "",
+      rg: "",
+      orgaoEmissor: "",
       logradouro: "",
       bairro: "",
       numero: "",
       cidade: "",
-      uf: null as unknown as Uf,
+      uf: null as Uf | null,
       cep: "",
       telefone: "",
       email: "",
+      observacoes: "",
     },
     resolver: zodResolver(formSchema),
     mode: "onBlur",
     reValidateMode: "onChange",
   });
 
+  const patient = useQuery({
+    queryKey: ["patient", id],
+    queryFn: () => getPatient(id),
+  });
+
+  useEffect(() => {
+    if (patient.data) {
+      setValue("nome", patient.data.nome);
+      setValue("sexo", patient.data.sexo);
+      setValue("nascimento", new Date(patient.data.nascimento));
+      setValue("cpf", cpfMask(patient.data.cpf));
+      setValue("rg", rgMask(patient.data.rg));
+      setValue("orgaoEmissor", patient.data.orgaoEmissor ?? "");
+      setValue("logradouro", patient.data.logradouro ?? "");
+      setValue("bairro", patient.data.bairro ?? "");
+      setValue("numero", patient.data.numero ?? "");
+      setValue("cidade", patient.data.cidade ?? "");
+      setValue("uf", patient.data.uf);
+      setValue("cep", cepMask(patient.data.cep ?? ""));
+      setValue("telefone", telefoneMask(patient.data.telefone ?? ""));
+      setValue("email", patient.data.email);
+      setValue("observacoes", patient.data.observacoes ?? "");
+    }
+  }, [patient.data, setValue]);
+
   const router = useRouter();
 
-  const createDoctorMutation = useMutation({
-    mutationKey: ["createDoctor"],
+  const updatePatientMutation = useMutation({
+    mutationKey: ["updatePatient"],
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      await createDoctor(data);
-      router.push("/doctors");
+      await updatePatient(id, data);
+      router.push("/patients");
     },
   });
 
   const noErrors = Object.keys(formState.errors).length === 0;
-  const disabled = !noErrors || createDoctorMutation.isPending;
+  const disabled = !noErrors || updatePatientMutation.isPending;
 
   return (
     <main className="flex flex-1 flex-col">
@@ -86,8 +122,8 @@ export default function CreateDoctor() {
               <div className="flex flex-col pt-4 lg:pt-8">
                 <Breadcrumbs
                   path={[
-                    { route: "/doctors", label: "Médicos" },
-                    { route: "/doctors/create", label: "Criar novo médico" },
+                    { route: "/patients", label: "Pacientes" },
+                    { route: "/patients/update", label: "Editar paciente" },
                   ]}
                 />
               </div>
@@ -95,56 +131,53 @@ export default function CreateDoctor() {
           </div>
           <div className="w-full pt-2 lg:w-3/4">
             <FormContainer
-              title="Criar novo médico"
-              subtitle="Preencha os campos abaixo para criar um novo médico no sistema"
-              onSubmit={handleSubmit(data => createDoctorMutation.mutate(data))}
-              isLoading={createDoctorMutation.isPending}
+              title="Editar paciente"
+              subtitle="Edite os campos abaixo para atualizar o paciente no sistema"
+              onSubmit={handleSubmit(data => updatePatientMutation.mutate(data))}
+              isLoading={updatePatientMutation.isPending}
               disabled={disabled}
-              error={createDoctorMutation.error?.message}
+              error={updatePatientMutation.error?.message}
             >
               <FormSection title="Informações gerais">
                 <ControlledInput
                   control={control}
                   name="nome"
                   label="Nome completo"
-                  placeholder="Informe o nome do médico"
+                  placeholder="Informe o nome do paciente"
                 />
                 <ControlledSelect
                   control={control}
-                  name="conselho"
-                  label="Conselho"
-                  data={Object.values(Conselho) as Conselho[]}
+                  name="sexo"
+                  label="Sexo"
+                  data={Object.keys(Sexo) as Sexo[]}
                   dataValue={value => value}
                   render={value => value}
                 />
-                <ControlledSelect
+                <ControlledDatePicker
                   control={control}
-                  name="conselhoUf"
-                  label="UF do conselho"
-                  data={Object.keys(Uf) as Uf[]}
-                  dataValue={value => value}
-                  render={value => value}
-                />
-                <ControlledInput
-                  control={control}
-                  name="conselhoNum"
-                  label="Nº do conselho"
-                  placeholder="Informe o número do conselho"
-                />
-                <ControlledSelect
-                  control={control}
-                  name="cbo"
-                  label="Classificação Brasileira de Ocupações (CBO)"
-                  data={Object.keys(Cbo) as Cbo[]}
-                  dataValue={value => value}
-                  render={value => `${value} - ${descricaoCbo[value]}`}
+                  name="nascimento"
+                  label="Data de nascimento"
+                  mode="far"
                 />
                 <ControlledInput
                   control={control}
                   name="cpf"
                   label="CPF"
-                  placeholder="Informe o CPF"
+                  placeholder="Informe o CPF do paciente"
                   mask={cpfMask}
+                />
+                <ControlledInput
+                  control={control}
+                  name="rg"
+                  label="RG"
+                  placeholder="Informe o RG do paciente"
+                  mask={rgMask}
+                />
+                <ControlledInput
+                  control={control}
+                  name="orgaoEmissor"
+                  label="Órgão emissor"
+                  placeholder="Informe o órgão emissor"
                 />
               </FormSection>
               <FormSection title="Endereço">
@@ -201,6 +234,15 @@ export default function CreateDoctor() {
                   name="email"
                   label="Email"
                   placeholder="Informe um e-mail válido"
+                />
+              </FormSection>
+              <FormSection title="Observações">
+                <ControlledTextarea
+                  control={control}
+                  name="observacoes"
+                  label="Observações"
+                  placeholder="Escreva aqui suas observações"
+                  className="col-span-3"
                 />
               </FormSection>
             </FormContainer>

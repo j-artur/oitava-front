@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { FC } from "react";
 import { DataTable } from "~/components/data-table";
 import { DestructiveAlert } from "~/components/ui/alert-dialog";
@@ -45,7 +46,9 @@ export const PatientsTable: FC = () => {
       }}
       actions={patient => (
         <div className="flex gap-2">
-          <Button variant="secondary">Editar</Button>
+          <Link href={`/patients/${patient.id}/update`}>
+            <Button variant="secondary">Editar</Button>
+          </Link>
           <DestructiveAlert onConfirm={() => deletePatientMutation.mutate(patient.id)}>
             <Button variant="destructive-outline">Excluir</Button>
           </DestructiveAlert>

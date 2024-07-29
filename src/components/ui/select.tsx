@@ -158,19 +158,13 @@ export {
 };
 
 export const Select = <TData,>(props: Props<TData>) => {
-  const [selected, setSelected] = React.useState(props.value);
-
-  const handleChange = (value: TData) => {
-    setSelected(value);
-    props.onChange(value);
-  };
-
   return (
     <SelectRoot
-      defaultValue={selected && props.dataValue(selected).toString()}
-      onValueChange={value =>
-        handleChange(props.data.find(item => props.dataValue(item).toString() === value)!)
-      }
+      value={props.value ? props.dataValue(props.value).toString() : ""}
+      onValueChange={value => {
+        const newValue = props.data.find(item => props.dataValue(item)?.toString() === value)!;
+        if (newValue) props.onChange(newValue);
+      }}
       onOpenChange={open => {
         if (!open) props.onBlur?.();
       }}
@@ -180,7 +174,7 @@ export const Select = <TData,>(props: Props<TData>) => {
       </SelectTrigger>
       <SelectContent>
         {props.data.map(item => (
-          <SelectItem key={props.dataValue(item)} value={props.dataValue(item).toString()}>
+          <SelectItem key={props.dataValue(item)} value={props.dataValue(item)!.toString()}>
             {props.render(item)}
           </SelectItem>
         ))}

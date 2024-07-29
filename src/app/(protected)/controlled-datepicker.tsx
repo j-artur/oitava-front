@@ -1,11 +1,10 @@
-import type { ComponentProps } from "react";
 import type { Control, Path } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { Error } from "~/components/error";
 import { cn } from "~/lib/utils";
 import { DatePicker } from "./date-picker";
 
-type Props<TForm extends Record<string, unknown>> = ComponentProps<"input"> & {
+type Props<TForm extends Record<string, unknown>> = {
   control: Control<TForm>;
   name: Path<TForm>;
   label?: string;
@@ -16,8 +15,7 @@ export function ControlledDatePicker<TForm extends Record<string, unknown>>({
   control,
   name,
   label,
-  value,
-  ...inputProps
+  mode,
 }: Props<TForm>) {
   return (
     <Controller
@@ -39,7 +37,7 @@ export function ControlledDatePicker<TForm extends Record<string, unknown>>({
                 {label}
               </label>
             )}
-            <DatePicker value={value as Date} {...inputProps} {...fieldProps} />
+            <DatePicker value={value as Date} mode={mode} {...fieldProps} />
           </div>
           {fieldState.error && <Error>{fieldState.error.message}</Error>}
         </div>
