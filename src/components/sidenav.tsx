@@ -104,7 +104,7 @@ export const Sidenav: FC = () => {
             Configurações
           </NavItem>
           <NavItem
-            href="/logout"
+            href="/signout"
             icon={HiArrowRightStartOnRectangle}
             isOpen={isOpen}
             setIsOpen={setIsOpen}

@@ -25,7 +25,7 @@ const pageSizeOptions = [6, 12, 20, 30, 50];
 export function DataTable<TData extends Data<TCols>, TCols extends string>(
   props: Props<TData, TCols>,
 ) {
-  const [pageSize, setPageSize] = useState(12);
+  const [pageSize, setPageSize] = useState(6);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [order, setOrder] = useState<"asc" | "desc">("asc");

@@ -12,7 +12,7 @@ export function getToken() {
   }
 }
 
-export function removeToken() {
+export function clearToken() {
   if ("window" in globalThis) {
     window.localStorage.removeItem("oitava.token");
   }

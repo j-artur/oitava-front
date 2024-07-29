@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
 import { z } from "zod";
@@ -33,10 +33,6 @@ const SignIn: FC = () => {
     mode: "onBlur",
     reValidateMode: "onChange",
   });
-
-  useEffect(() => {
-    console.log(formState.errors);
-  }, [formState.errors]);
 
   const [showPassword, setShowPassword] = useState(false);
 
