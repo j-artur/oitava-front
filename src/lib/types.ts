@@ -23,18 +23,18 @@ export type Doctor = {
   agendamentos: Appointment[];
 };
 
-export const Sex = {
-  MALE: "MALE",
-  FEMALE: "FEMALE",
+export const Sexo = {
+  Masculino: "Masculino",
+  Feminino: "Feminino",
 };
 
-export type Sex = (typeof Sex)[keyof typeof Sex];
+export type Sexo = (typeof Sexo)[keyof typeof Sexo];
 
 export type Patient = {
   id: number;
   nome: string;
-  sex: Sex;
-  birthdate: string;
+  sexo: Sexo;
+  nascimento: string;
   cpf: string;
   rg: string;
   orgaoEmissor: string | null;

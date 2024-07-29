@@ -34,6 +34,7 @@ const config = {
           tertiary: "#475569",
           label: "#747C80",
           eye: "#B1B7BA",
+          breadcrumb: "#9CA3AF",
         },
         primary: {
           light: "#66DBBF",

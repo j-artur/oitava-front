@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { FC } from "react";
 import { DataTable } from "~/components/data-table";
 import { Button } from "~/components/ui/button";
-import { Sex } from "~/lib/types";
 import { getPatients } from "~/services/patient";
 
 export const PatientsTable: FC = () => {
