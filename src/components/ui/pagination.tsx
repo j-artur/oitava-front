@@ -151,7 +151,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Props) => 
               onPageChange(currentPage + 1);
             }
           }}
-          disabled={currentPage === totalPages}
+          disabled={currentPage >= totalPages}
         />
       </PaginationContent>
     </PaginationRoot>

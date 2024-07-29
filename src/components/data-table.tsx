@@ -14,16 +14,16 @@ type Data<TCols extends string> = Record<TCols, {}> & { id: Id };
 type Props<TData extends Data<TCols>, TCols extends string> = Readonly<{
   data: TData[];
   cols: TCols[];
-  customRender: Partial<Record<TCols, (data: TData) => ReactNode>>;
+  customRender?: Partial<Record<TCols, (data: TData) => ReactNode>>;
   actions?: (data: TData) => ReactNode;
 }>;
 
-const quantityOptions = [10, 25, 50, 100];
+const quantityOptions = [6, 12, 20, 30, 50];
 
 export function DataTable<TData extends Data<TCols>, TCols extends string>(
   props: Props<TData, TCols>,
 ) {
-  const [pageSize, setPageSize] = useState(quantityOptions[0]);
+  const [pageSize, setPageSize] = useState(12);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
@@ -61,9 +61,9 @@ export function DataTable<TData extends Data<TCols>, TCols extends string>(
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <div className="flex w-full flex-col rounded-xl border bg-bg-white">
-        <div className="flex w-full flex-col justify-between gap-4 border-b border-border-light p-6 md:flex-row">
-          <div className="relative flex md:grow">
+      <div className="flex w-full flex-col border-y bg-bg-white lg:rounded-xl lg:border-x">
+        <div className="flex w-full flex-col justify-between gap-4 border-b border-border-light p-6 lg:flex-row">
+          <div className="relative flex lg:grow">
             <Input
               className="w-full min-w-0 pl-9"
               placeholder="Pesquisar"
@@ -72,7 +72,7 @@ export function DataTable<TData extends Data<TCols>, TCols extends string>(
             />
             <HiMagnifyingGlass className="absolute left-3 top-3" size={16} />
           </div>
-          <div className="flex items-center justify-end gap-2 md:grow">
+          <div className="flex items-center justify-end gap-2 lg:grow">
             <p className="text-xs font-medium">Informações apresentadas por página:</p>
             <Select
               className="w-20"
@@ -141,7 +141,7 @@ export function DataTable<TData extends Data<TCols>, TCols extends string>(
                       title={row ? row[col as TCols].toString() : ""}
                     >
                       {row
-                        ? (props.customRender[col]?.(row) ?? row[col as TCols].toString())
+                        ? (props.customRender?.[col]?.(row) ?? row[col as TCols].toString())
                         : null}
                     </td>
                   ))}
@@ -154,7 +154,7 @@ export function DataTable<TData extends Data<TCols>, TCols extends string>(
           </table>
         </div>
       </div>
-      <div className="flex justify-end gap-4 px-4 md:px-0">
+      <div className="flex justify-end gap-4 px-4 lg:px-0">
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

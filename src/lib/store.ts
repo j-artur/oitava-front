@@ -9,17 +9,25 @@ type AuthSegment = {
 export const setAuth = createAction<AuthSegment>("auth/set");
 export const clearAuth = createAction("auth/clear");
 
+export const initialize = createAction("initialize");
+
 const authReducer = createReducer(null as AuthSegment | null, builder => {
   builder.addCase(setAuth, (_, action) => action.payload);
   builder.addCase(clearAuth, () => null);
 });
 
+const initializedReducer = createReducer(false, builder => {
+  builder.addCase(initialize, () => true);
+});
+
 export const makeStore = () => {
   return configureStore({
     preloadedState: {
+      initialized: false,
       auth: null as AuthSegment | null,
     },
     reducer: {
+      initialized: initializedReducer,
       auth: authReducer,
     },
   });

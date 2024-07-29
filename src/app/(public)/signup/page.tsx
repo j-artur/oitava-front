@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -122,14 +123,14 @@ const SignUp: FC = () => {
             {signUpMutation.isError && (
               <Error>Ocorreu um erro ao criar a conta. Verifique os dados e tente novamente.</Error>
             )}
-            <a href="/signin" className="flex w-full flex-col">
+            <Link href="/signin" className="flex w-full flex-col">
               <Button
                 variant="ghost"
                 className="text-sm font-bold text-destructive-text hover:bg-destructive-bg"
               >
                 Cancelar
               </Button>
-            </a>
+            </Link>
           </div>
         </div>
       </form>

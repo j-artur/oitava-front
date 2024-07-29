@@ -24,6 +24,7 @@ const buttonVariants = cva(
         lg: "h-11 px-8",
         xl: "h-14 px-10",
         icon: "h-10 w-10",
+        nav: "h-12 w-12",
       },
     },
     defaultVariants: {

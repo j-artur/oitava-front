@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,19 +38,19 @@ const ForgotPassword: FC = () => {
         <ControlledInput control={control} name="code" label="Código de recuperação" />
 
         <div className="flex flex-col gap-2 py-4">
-          <a href="/change-password" className="flex w-full flex-col">
+          <Link href="/change-password" className="flex w-full flex-col">
             <Button type="submit" size="lg" className="text-md" disabled={disabled}>
               Recuperar acesso
             </Button>
-          </a>
-          <a href="/signin" className="flex w-full flex-col">
+          </Link>
+          <Link href="/signin" className="flex w-full flex-col">
             <Button
               variant="ghost"
               className="text-sm font-bold text-destructive-text hover:bg-destructive-bg"
             >
               Cancelar
             </Button>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

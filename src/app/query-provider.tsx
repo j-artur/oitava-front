@@ -1,9 +1,6 @@
 "use client";
 
 import { isServer, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useRef } from "react";
-import { Provider } from "react-redux";
-import { AppStore, makeStore } from "../lib/store";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -33,18 +30,8 @@ function getQueryClient() {
   }
 }
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<AppStore>();
-  if (!storeRef.current) {
-    // Create the store instance the first time this renders
-    storeRef.current = makeStore();
-  }
-
+export function QueryProvider({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
-  return (
-    <Provider store={storeRef.current}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </Provider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

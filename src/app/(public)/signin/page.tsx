@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -51,7 +52,7 @@ const SignIn: FC = () => {
         storeToken(token);
         const user = await me();
         dispatch(setAuth({ user, token }));
-        router.push("/");
+        router.push("/home");
       } catch (e) {
         // handle error
       }
@@ -114,16 +115,16 @@ const SignIn: FC = () => {
               </Error>
             )}
             <div className="flex justify-between">
-              <a href="/signup">
+              <Link href="/signup">
                 <Button variant="ghost" className="text-sm font-bold text-text-tertiary">
                   Criar conta
                 </Button>
-              </a>
-              <a href="/forgot-password">
+              </Link>
+              <Link href="/forgot-password">
                 <Button variant="ghost" className="text-sm font-bold text-text-tertiary">
                   Esqueceu senha?
                 </Button>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
