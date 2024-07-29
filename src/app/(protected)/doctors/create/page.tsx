@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Breadcrumbs from "~/components/breadcrumbs";
-import { CreateForm, FormSection } from "~/components/create-form";
+import { FormContainer, FormSection } from "~/components/form-container";
 import { Cbo, cepMask, Conselho, cpfMask, descricaoCbo, telefoneMask, Uf } from "~/lib/utils";
 import { createDoctor } from "~/services/doctor";
 import { ControlledInput } from "../../controlled-input";
@@ -22,15 +22,16 @@ const formSchema = z.object({
     .string()
     .length(14, "CPF inválido")
     .transform(value => value.replace(/\D/g, "")),
-  logradouro: z.string().min(1, "Logradouro é obrigatório"),
-  bairro: z.string().min(1, "Bairro é obrigatório"),
-  numero: z.string().min(1, "Número é obrigatório"),
-  cidade: z.string().min(1, "Cidade é obrigatório"),
-  uf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
+  logradouro: z.string(),
+  bairro: z.string(),
+  numero: z.string(),
+  cidade: z.string(),
+  uf: z.nativeEnum(Uf, { message: "Selecione uma opção" }).nullable(),
   cep: z
     .string()
     .length(9, "CEP inválido")
-    .transform(value => value.replace(/\D/g, "")),
+    .transform(value => value.replace(/\D/g, ""))
+    .or(z.string()),
   telefone: z
     .string()
     .length(15, "Telefone inválido")
@@ -93,7 +94,7 @@ export default function CreateDoctor() {
             </div>
           </div>
           <div className="w-full pt-2 lg:w-3/4">
-            <CreateForm
+            <FormContainer
               title="Criar novo médico"
               subtitle="Preencha os campos abaixo para criar um novo médico no sistema"
               onSubmit={handleSubmit(data => createDoctorMutation.mutate(data))}
@@ -202,7 +203,7 @@ export default function CreateDoctor() {
                   placeholder="Informe um e-mail válido"
                 />
               </FormSection>
-            </CreateForm>
+            </FormContainer>
           </div>
         </div>
       </div>

@@ -45,4 +45,14 @@ export type Patient = {
   agendamentos: Appointment[];
 };
 
-export type Appointment = {};
+export type Appointment = {
+  id: number;
+  medicoId: number;
+  medico: Doctor;
+  pacienteId: number;
+  paciente: Patient;
+  motivo: string;
+  dataHora: Date;
+  local: string;
+  observacoes: string | null;
+};

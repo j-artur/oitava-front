@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Breadcrumbs from "~/components/breadcrumbs";
-import { CreateForm, FormSection } from "~/components/create-form";
+import { FormContainer, FormSection } from "~/components/form-container";
 import { cepMask, cpfMask, rgMask, Sexo, telefoneMask, Uf } from "~/lib/utils";
 import { createPatient } from "~/services/patient";
 import { ControlledDatePicker } from "../../controlled-datepicker";
@@ -27,15 +27,16 @@ const formSchema = z.object({
     .length(11, "RG inválido")
     .transform(value => value.replace(/\D/g, "")),
   orgaoEmissor: z.string().min(1, "Órgão emissor é obrigatório"),
-  logradouro: z.string().min(1, "Logradouro é obrigatório"),
-  bairro: z.string().min(1, "Bairro é obrigatório"),
-  numero: z.string().min(1, "Número é obrigatório"),
-  cidade: z.string().min(1, "Cidade é obrigatório"),
-  uf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
+  logradouro: z.string(),
+  bairro: z.string(),
+  numero: z.string(),
+  cidade: z.string(),
+  uf: z.nativeEnum(Uf, { message: "Selecione uma opção" }).nullable(),
   cep: z
     .string()
     .length(9, "CEP inválido")
-    .transform(value => value.replace(/\D/g, "")),
+    .transform(value => value.replace(/\D/g, ""))
+    .or(z.string()),
   telefone: z
     .string()
     .length(15, "Telefone inválido")
@@ -100,12 +101,13 @@ export default function CreatePatient() {
             </div>
           </div>
           <div className="w-full pt-2 lg:w-3/4">
-            <CreateForm
+            <FormContainer
               title="Criar novo paciente"
               subtitle="Preencha os campos abaixo para criar um novo paciente no sistema"
               onSubmit={handleSubmit(data => createPatientMutation.mutate(data))}
               isLoading={createPatientMutation.isPending}
               disabled={disabled}
+              error={createPatientMutation.error?.message}
             >
               <FormSection title="Informações gerais">
                 <ControlledInput
@@ -214,7 +216,7 @@ export default function CreatePatient() {
                   className="col-span-3"
                 />
               </FormSection>
-            </CreateForm>
+            </FormContainer>
           </div>
         </div>
       </div>

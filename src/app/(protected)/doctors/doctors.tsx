@@ -31,8 +31,8 @@ export const DoctorsTable: FC = () => {
           ID: doctor.id.toString().padStart(4, "0"),
           Nome: doctor.nome,
           Conselho: doctor.conselho,
-          Nº: `${doctor.conselhoNum}/${doctor.conselhoUf}`,
-          CBO: doctor.cbo ?? "-",
+          Nº: `${doctor.conselhoUf}/${doctor.conselhoNum}`,
+          CBO: doctor.cbo || "-",
           CPF: doctor.cpf,
         })) ?? []
       }

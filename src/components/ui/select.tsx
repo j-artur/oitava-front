@@ -140,9 +140,9 @@ SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 type Props<TData> = {
   className?: string;
   data: TData[];
-  dataValue: (data: TData) => string;
+  dataValue: (data: TData) => string | number;
   render: (data: TData) => React.ReactNode;
-  value: TData;
+  value?: TData;
   onChange: (value: TData) => void;
   onBlur?: () => void;
 };
@@ -167,9 +167,9 @@ export const Select = <TData,>(props: Props<TData>) => {
 
   return (
     <SelectRoot
-      defaultValue={props.dataValue(selected)}
+      defaultValue={selected && props.dataValue(selected).toString()}
       onValueChange={value =>
-        handleChange(props.data.find(item => props.dataValue(item) === value)!)
+        handleChange(props.data.find(item => props.dataValue(item).toString() === value)!)
       }
       onOpenChange={open => {
         if (!open) props.onBlur?.();
@@ -180,7 +180,7 @@ export const Select = <TData,>(props: Props<TData>) => {
       </SelectTrigger>
       <SelectContent>
         {props.data.map(item => (
-          <SelectItem key={props.dataValue(item)} value={props.dataValue(item)}>
+          <SelectItem key={props.dataValue(item)} value={props.dataValue(item).toString()}>
             {props.render(item)}
           </SelectItem>
         ))}

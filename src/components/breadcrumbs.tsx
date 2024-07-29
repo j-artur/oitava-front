@@ -10,7 +10,7 @@ type Props = {
 export default function Breadcrumbs({ path }: Props) {
   return (
     <div className="flex flex-row flex-wrap items-center gap-1 pt-4 lg:pt-8">
-      <Link href="/" className="pb-0.5 text-xs font-bold text-white hover:text-primary-light">
+      <Link href="/home" className="pb-0.5 text-xs font-bold text-white hover:text-primary-light">
         Home
       </Link>
       {path.map((segment, i) => (

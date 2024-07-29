@@ -34,7 +34,7 @@ export const PatientsTable: FC = () => {
           Telefone: patient.telefone ?? "",
           Sexo: patient.sexo,
           Nascimento: new Date(patient.nascimento).toLocaleDateString("pt-BR", { timeZone: "UTC" }),
-          Observações: patient.observacoes?.split("\n")?.[0] ?? "-",
+          Observações: patient.observacoes?.split("\n")?.[0] || "-",
         })) ?? []
       }
       customRender={{

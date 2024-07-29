@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { IconType } from "react-icons";
 import {
   HiArrowRightStartOnRectangle,
@@ -21,21 +21,6 @@ import { Button } from "./ui/button";
 
 export const Sidenav: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [screenWidth, setScreenWidth] = useState(0);
-
-  const lg = screenWidth >= 1024;
-
-  useEffect(() => {
-    const eventListener = (e: UIEvent) => {
-      setScreenWidth(window.innerWidth);
-    };
-
-    document.addEventListener("resize", eventListener);
-
-    return () => {
-      document.removeEventListener("resize", eventListener);
-    };
-  }, []);
 
   return (
     <div
@@ -46,8 +31,6 @@ export const Sidenav: FC = () => {
           "w-full lg:w-80": isOpen,
         },
       )}
-      onMouseEnter={() => lg && setIsOpen(true)}
-      onMouseLeave={() => lg && setIsOpen(false)}
     >
       <div className="fixed z-50 flex h-20 w-20 items-center justify-center lg:hidden">
         {isOpen ? (
@@ -70,54 +53,65 @@ export const Sidenav: FC = () => {
           </Button>
         )}
       </div>
-      <div className="grow flex-col border-b border-border-dark">
-        <div className="flex h-40 shrink-0 items-center justify-center">
-          {isOpen ? (
-            <Image src="/logo.png" width={180} height={60} alt="Oitava Rosado" />
-          ) : (
-            <Image src="/logo-image.png" width={60} height={60} alt="Oitava Rosado" />
-          )}
+      <div
+        className="flex h-full flex-col"
+        onMouseEnter={() => setIsOpen(true)}
+        onMouseLeave={() => setIsOpen(false)}
+      >
+        <div className="grow flex-col border-b border-border-dark">
+          <div className="flex h-40 shrink-0 items-center justify-center">
+            {isOpen ? (
+              <Image src="/logo.png" width={180} height={60} alt="Oitava Rosado" />
+            ) : (
+              <Image src="/logo-image.png" width={60} height={60} alt="Oitava Rosado" />
+            )}
+          </div>
+          <ul className="grow">
+            <NavItem href="/home" icon={HiOutlineHome} isOpen={isOpen} setIsOpen={setIsOpen}>
+              Início
+            </NavItem>
+            <NavItem href="/users" icon={HiOutlineUserGroup} isOpen={isOpen} setIsOpen={setIsOpen}>
+              Usuários
+            </NavItem>
+            <NavItem
+              href="/doctors"
+              icon={HiOutlineUserCircle}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            >
+              Médicos
+            </NavItem>
+            <NavItem
+              href="/patients"
+              icon={HiOutlineIdentification}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            >
+              Pacientes
+            </NavItem>
+            <NavItem
+              href="/appointments"
+              icon={HiOutlineCalendarDays}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            >
+              Agendamentos
+            </NavItem>
+          </ul>
         </div>
-        <ul className="grow">
-          <NavItem href="/home" icon={HiOutlineHome} isOpen={isOpen} setIsOpen={setIsOpen}>
-            Início
-          </NavItem>
-          <NavItem href="/users" icon={HiOutlineUserGroup} isOpen={isOpen} setIsOpen={setIsOpen}>
-            Usuários
-          </NavItem>
-          <NavItem href="/doctors" icon={HiOutlineUserCircle} isOpen={isOpen} setIsOpen={setIsOpen}>
-            Médicos
+        <div className="flex flex-col pb-20">
+          <NavItem href="/settings" icon={HiOutlineCog8Tooth} isOpen={isOpen} setIsOpen={setIsOpen}>
+            Configurações
           </NavItem>
           <NavItem
-            href="/patients"
-            icon={HiOutlineIdentification}
+            href="/logout"
+            icon={HiArrowRightStartOnRectangle}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
           >
-            Pacientes
+            Sair
           </NavItem>
-          <NavItem
-            href="/appointments"
-            icon={HiOutlineCalendarDays}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-          >
-            Agendamentos
-          </NavItem>
-        </ul>
-      </div>
-      <div className="flex flex-col pb-20">
-        <NavItem href="/settings" icon={HiOutlineCog8Tooth} isOpen={isOpen} setIsOpen={setIsOpen}>
-          Configurações
-        </NavItem>
-        <NavItem
-          href="/logout"
-          icon={HiArrowRightStartOnRectangle}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-        >
-          Sair
-        </NavItem>
+        </div>
       </div>
     </div>
   );

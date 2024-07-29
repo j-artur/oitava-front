@@ -9,7 +9,7 @@ type Props<TForm extends Record<string, unknown>, TData> = {
   name: Path<TForm>;
   label?: string;
   data: TData[];
-  dataValue: (data: TData) => string;
+  dataValue: (data: TData) => string | number;
   render: (data: TData) => React.ReactNode;
 };
 
@@ -25,7 +25,7 @@ export function ControlledSelect<TForm extends Record<string, unknown>, TData>({
     <Controller
       control={control}
       name={name as Path<TForm>}
-      render={({ field: { value, ...fieldProps }, fieldState }) => (
+      render={({ field: { value, onChange, ...fieldProps }, fieldState }) => (
         <div className="flex flex-col gap-1">
           <div className="relative">
             {label && (
@@ -46,6 +46,7 @@ export function ControlledSelect<TForm extends Record<string, unknown>, TData>({
               data={data}
               dataValue={dataValue}
               render={render}
+              onChange={value => onChange(dataValue(value))}
               {...fieldProps}
             />
           </div>

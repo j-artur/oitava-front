@@ -14,7 +14,7 @@ type Props = {
   children: ReactNode;
 };
 
-export const CreateForm: FC<Props> = props => {
+export const FormContainer: FC<Props> = props => {
   const router = useRouter();
 
   return (

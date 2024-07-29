@@ -19,7 +19,7 @@ export default function Doctors() {
                 <div className="flex flex-col">
                   <h1 className="text-3xl font-bold text-white">Médicos</h1>
                   <p className="font-medium text-white/90">
-                    Gerencie com eficiência e segurança os médicos da clínica
+                    Gerencie com eficiência e segurança os médicos do sistema
                   </p>
                 </div>
                 <div className="flex">
