@@ -1,12 +1,17 @@
-import { FC, ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { FC, FormEventHandler, ReactNode } from "react";
+import { Button } from "./ui/button";
 
 type Props = {
   title: string;
   subtitle: string;
+  onSubmit: FormEventHandler<HTMLFormElement>;
   children: ReactNode;
 };
 
 export const CreateForm: FC<Props> = props => {
+  const router = useRouter();
+
   return (
     <div className="flex w-full flex-col border-y bg-bg-white px-6 lg:rounded-lg lg:border-x lg:px-14 lg:pb-8 lg:pt-2">
       <div className="flex flex-col gap-2 border-b border-border-dark py-4 lg:py-6">
@@ -14,7 +19,13 @@ export const CreateForm: FC<Props> = props => {
         <p className="text-xs text-text-label">{props.subtitle}</p>
       </div>
 
-      <form>{props.children}</form>
+      <form onSubmit={props.onSubmit}>{props.children}</form>
+      <div className="flex justify-end gap-2 pt-4">
+        <Button variant="destructive-ghost" onClick={() => router.back()}>
+          Cancelar
+        </Button>
+        <Button type="submit">Salvar informações</Button>
+      </div>
     </div>
   );
 };

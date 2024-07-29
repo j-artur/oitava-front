@@ -1,3 +1,5 @@
+import { Sexo } from "./utils";
+
 export type User = {
   id: number;
   nome: string;
@@ -22,13 +24,6 @@ export type Doctor = {
   email: string | null;
   agendamentos: Appointment[];
 };
-
-export const Sexo = {
-  Masculino: "Masculino",
-  Feminino: "Feminino",
-};
-
-export type Sexo = (typeof Sexo)[keyof typeof Sexo];
 
 export type Patient = {
   id: number;

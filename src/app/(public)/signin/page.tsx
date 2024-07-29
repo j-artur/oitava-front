@@ -63,7 +63,7 @@ const SignIn: FC = () => {
   const disabled = !noErrors || !formState.isDirty || signInMutation.isPending;
 
   return (
-    <div className="flex max-w-96 flex-col gap-8">
+    <div className="flex h-full max-w-96 flex-col gap-8">
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold text-primary-dark">Acessar conta</h1>
         <p className="text-text-tertiary">

@@ -26,7 +26,7 @@ const ForgotPassword: FC = () => {
   const disabled = !noErrors || !formState.isDirty;
 
   return (
-    <div className="flex max-w-96 flex-col gap-8">
+    <div className="flex h-full max-w-96 flex-col gap-8">
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold text-primary-dark">Recuperar acesso</h1>
         <p className="text-text-tertiary">
@@ -44,12 +44,7 @@ const ForgotPassword: FC = () => {
             </Button>
           </Link>
           <Link href="/signin" className="flex w-full flex-col">
-            <Button
-              variant="ghost"
-              className="text-sm font-bold text-destructive-text hover:bg-destructive-bg"
-            >
-              Cancelar
-            </Button>
+            <Button variant="destructive-ghost">Cancelar</Button>
           </Link>
         </div>
       </div>

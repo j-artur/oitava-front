@@ -5,21 +5,22 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Breadcrumbs from "~/components/breadcrumbs";
 import { CreateForm, FormSection } from "~/components/create-form";
-import { cpfMask } from "~/lib/utils";
+import { Cbo, Conselho, cpfMask, descricaoCbo, Uf } from "~/lib/utils";
 import { ControlledInput } from "../../controlled-input";
+import { ControlledSelect } from "../../controlled-select";
 
 const formSchema = z.object({
-  nome: z.string().min(3, "Nome muito curto").max(255, "Nome muito longo"),
-  conselho: z.string().min(1, "Conselho é obrigatório"),
-  conselhoUf: z.string().length(2, "UF do conselho é obrigatório"),
+  nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  conselho: z.nativeEnum(Conselho, { message: "Selecione uma opção" }),
+  conselhoUf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
   conselhoNum: z.string().min(1, "Número do conselho é obrigatório"),
-  cbo: z.string(),
+  cbo: z.nativeEnum(Cbo, { message: "Selecione uma opção" }).nullable(),
   cpf: z.string().length(11, "CPF inválido"),
   logradouro: z.string(),
   bairro: z.string(),
   numero: z.string(),
   cidade: z.string(),
-  uf: z.string().length(2, "UF inválida"),
+  uf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
   cep: z.string().length(8, "CEP inválido"),
   telefone: z.string().length(11, "Telefone inválido"),
   email: z.string().email("Email inválido"),
@@ -29,22 +30,23 @@ export default function CreateDoctor() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       nome: "",
-      conselho: "",
-      conselhoUf: "",
+      conselho: null,
+      conselhoUf: null,
       conselhoNum: "",
-      cbo: "",
+      cbo: null,
       cpf: "",
       logradouro: "",
       bairro: "",
       numero: "",
       cidade: "",
-      uf: "",
+      uf: null,
       cep: "",
       telefone: "",
       email: "",
     },
     resolver: zodResolver(formSchema),
     mode: "onBlur",
+    reValidateMode: "onChange",
   });
 
   return (
@@ -67,7 +69,7 @@ export default function CreateDoctor() {
           </div>
           <div className="w-full pt-2 lg:w-3/4">
             <CreateForm
-              title="Criar novo Médico"
+              title="Criar novo médico"
               subtitle="Preencha os campos abaixo para criar um novo médico no sistema"
             >
               <FormSection title="Informações gerais">
@@ -77,17 +79,21 @@ export default function CreateDoctor() {
                   label="Nome completo"
                   placeholder="Informe o nome do médico"
                 />
-                <ControlledInput
+                <ControlledSelect
                   control={control}
                   name="conselho"
                   label="Conselho"
-                  placeholder="Informe o conselho"
+                  data={Object.values(Conselho) as Conselho[]}
+                  dataValue={value => value}
+                  render={value => value}
                 />
-                <ControlledInput
+                <ControlledSelect
                   control={control}
                   name="conselhoUf"
                   label="UF do conselho"
-                  placeholder="Informe a UF do conselho"
+                  data={Object.keys(Uf) as Uf[]}
+                  dataValue={value => value}
+                  render={value => value}
                 />
                 <ControlledInput
                   control={control}
@@ -95,11 +101,13 @@ export default function CreateDoctor() {
                   label="Nº do conselho"
                   placeholder="Informe o número do conselho"
                 />
-                <ControlledInput
+                <ControlledSelect
                   control={control}
                   name="cbo"
                   label="Classificação Brasileira de Ocupações (CBO)"
-                  placeholder="Informe o CBO"
+                  data={Object.keys(Cbo) as Cbo[]}
+                  dataValue={value => value}
+                  render={value => `${value} - ${descricaoCbo[value]}`}
                 />
                 <ControlledInput
                   control={control}
@@ -134,11 +142,13 @@ export default function CreateDoctor() {
                   label="Cidade"
                   placeholder="Informe a cidade"
                 />
-                <ControlledInput
+                <ControlledSelect
                   control={control}
                   name="uf"
                   label="UF"
-                  placeholder="Informe a UF"
+                  data={Object.keys(Uf) as Uf[]}
+                  dataValue={value => value}
+                  render={value => value}
                 />
                 <ControlledInput
                   control={control}

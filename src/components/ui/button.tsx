@@ -15,6 +15,7 @@ const buttonVariants = cva(
         "destructive":
           "border-destructive-border bg-destructive-bg text-destructive-text hover:bg-destructive-hover",
         "ghost": "border-none hover:bg-bg-hover",
+        "destructive-ghost": "border-none font-bold text-destructive-text hover:bg-destructive-bg",
         "pagination": "border-none bg-primary-light/50 text-text-primary hover:bg-primary-light",
       },
       size: {

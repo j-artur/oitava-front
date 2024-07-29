@@ -17,7 +17,7 @@ export default function AuthLayout({
             style={{ filter: "brightness(0) invert(1)" }}
           />
         </div>
-        <div className="flex h-full w-full flex-1 shrink flex-col items-center justify-center gap-4 bg-bg-white p-8">
+        <div className="flex h-full w-full flex-1 shrink flex-col items-center justify-center gap-4 overflow-auto bg-bg-white p-8">
           {children}
         </div>
       </div>

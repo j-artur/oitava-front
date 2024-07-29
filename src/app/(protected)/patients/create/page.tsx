@@ -5,22 +5,25 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Breadcrumbs from "~/components/breadcrumbs";
 import { CreateForm, FormSection } from "~/components/create-form";
-import { Sexo } from "~/lib/types";
-import { cpfMask } from "~/lib/utils";
+import { cpfMask, Sexo, Uf } from "~/lib/utils";
 import { ControlledInput } from "../../controlled-input";
+import { ControlledSelect } from "../../controlled-select";
 
 const formSchema = z.object({
-  nome: z.string().min(3, "Nome muito curto").max(255, "Nome muito longo"),
-  sex: z.nativeEnum(Sexo),
-  birthdate: z.string(),
-  cpf: z.string().length(11, "CPF inválido"),
+  nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  sexo: z.nativeEnum(Sexo, { message: "Selecione uma opção" }),
+  nascimento: z.string(),
+  cpf: z
+    .string()
+    .length(14, "CPF inválido")
+    .transform(value => value.replace(/\D/g, "")),
   rg: z.string().length(9, "RG inválido"),
   orgaoEmissor: z.string(),
   logradouro: z.string(),
   bairro: z.string(),
   numero: z.string(),
   cidade: z.string(),
-  uf: z.string().length(2, "UF inválida"),
+  uf: z.nativeEnum(Uf, { message: "Selecione uma opção" }),
   cep: z.string().length(8, "CEP inválido"),
   telefone: z.string().length(11, "Telefone inválido"),
   email: z.string().email("Email inválido"),
@@ -31,8 +34,8 @@ export default function CreatePatient() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       nome: "",
-      sex: Sexo.Masculino,
-      birthdate: "",
+      sexo: null,
+      nascimento: "",
       cpf: "",
       rg: "",
       orgaoEmissor: "",
@@ -40,7 +43,7 @@ export default function CreatePatient() {
       bairro: "",
       numero: "",
       cidade: "",
-      uf: "",
+      uf: null,
       cep: "",
       telefone: "",
       email: "",
@@ -48,6 +51,7 @@ export default function CreatePatient() {
     },
     resolver: zodResolver(formSchema),
     mode: "onBlur",
+    reValidateMode: "onChange",
   });
 
   return (
@@ -70,7 +74,7 @@ export default function CreatePatient() {
           </div>
           <div className="w-full pt-2 lg:w-3/4">
             <CreateForm
-              title="Criar novo Médico"
+              title="Criar novo paciente"
               subtitle="Preencha os campos abaixo para criar um novo paciente no sistema"
             >
               <FormSection title="Informações gerais">
@@ -80,15 +84,17 @@ export default function CreatePatient() {
                   label="Nome completo"
                   placeholder="Informe o nome do paciente"
                 />
-                <ControlledInput
+                <ControlledSelect
                   control={control}
-                  name="sex"
+                  name="sexo"
                   label="Sexo"
-                  placeholder="Informe o sexo do paciente"
+                  data={Object.keys(Sexo) as Sexo[]}
+                  dataValue={value => value}
+                  render={value => value}
                 />
                 <ControlledInput
                   control={control}
-                  name="birthdate"
+                  name="nascimento"
                   label="Data de nascimento"
                   placeholder="Informe a data de nascimento do paciente"
                 />
@@ -137,11 +143,13 @@ export default function CreatePatient() {
                   label="Cidade"
                   placeholder="Informe a cidade"
                 />
-                <ControlledInput
+                <ControlledSelect
                   control={control}
                   name="uf"
                   label="UF"
-                  placeholder="Informe a UF"
+                  data={Object.keys(Uf) as Uf[]}
+                  dataValue={value => value}
+                  render={value => value}
                 />
                 <ControlledInput
                   control={control}

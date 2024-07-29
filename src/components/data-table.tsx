@@ -18,7 +18,7 @@ type Props<TData extends Data<TCols>, TCols extends string> = Readonly<{
   actions?: (data: TData) => ReactNode;
 }>;
 
-const quantityOptions = [6, 12, 20, 30, 50];
+const pageSizeOptions = [6, 12, 20, 30, 50];
 
 export function DataTable<TData extends Data<TCols>, TCols extends string>(
   props: Props<TData, TCols>,
@@ -76,7 +76,8 @@ export function DataTable<TData extends Data<TCols>, TCols extends string>(
             <p className="text-xs font-medium">Informações apresentadas por página:</p>
             <Select
               className="w-20"
-              data={quantityOptions}
+              data={pageSizeOptions}
+              dataValue={n => n.toString()}
               value={pageSize}
               onChange={handlePageSizeChange}
               render={n => <p className="font-semibold text-text-primary">{n}</p>}
