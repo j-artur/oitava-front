@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -69,12 +69,14 @@ export default function CreatePatient() {
     reValidateMode: "onChange",
   });
 
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const createPatientMutation = useMutation({
     mutationKey: ["createPatient"],
-    mutationFn: async (data: z.infer<typeof formSchema>) => {
-      await createPatient(data);
+    mutationFn: (data: z.infer<typeof formSchema>) => createPatient(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
       router.push("/patients");
     },
   });

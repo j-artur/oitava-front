@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -53,12 +53,14 @@ export default function CreateAppointment() {
     queryFn: getPatients,
   });
 
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const createAppointmentMutation = useMutation({
     mutationKey: ["createAppointment"],
-    mutationFn: async (data: z.infer<typeof formSchema>) => {
-      await createAppointment(data);
+    mutationFn: (data: z.infer<typeof formSchema>) => createAppointment(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       router.push("/appointments");
     },
   });

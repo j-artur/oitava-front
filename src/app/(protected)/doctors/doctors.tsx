@@ -16,10 +16,8 @@ export const DoctorsTable: FC = () => {
 
   const deleteDoctorMutation = useMutation({
     mutationKey: ["deleteDoctor"],
-    mutationFn: async (id: number) => {
-      await deleteDoctor(id);
-      doctors.refetch();
-    },
+    mutationFn: (id: number) => deleteDoctor(id),
+    onSuccess: () => doctors.refetch(),
   });
 
   return (

@@ -16,10 +16,8 @@ export const AppointmentsTable: FC = () => {
 
   const deleteAppointmentMutation = useMutation({
     mutationKey: ["deleteAppointment"],
-    mutationFn: async (id: number) => {
-      await deleteAppointment(id);
-      appointments.refetch();
-    },
+    mutationFn: (id: number) => deleteAppointment(id),
+    onSuccess: () => appointments.refetch(),
   });
 
   return (
