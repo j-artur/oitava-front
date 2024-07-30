@@ -10,6 +10,8 @@ import { clearToken, getToken } from "~/services/token";
 export const AuthGuard: FC<{ children: ReactNode }> = ({ children }) => {
   const isInitialized = useAppSelector(store => store.initialized);
 
+  const authSegment = useAppSelector(store => store.auth);
+
   const dispatch = useAppDispatch();
 
   const token = getToken();
@@ -39,10 +41,10 @@ export const AuthGuard: FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if ("window" in globalThis && !token) {
+    if (isInitialized && !authSegment) {
       router.push("/signin");
     }
-  }, [token, router]);
+  }, [isInitialized, authSegment, router]);
 
   return <>{children}</>;
 };
