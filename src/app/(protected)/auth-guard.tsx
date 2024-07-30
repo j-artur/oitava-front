@@ -1,11 +1,11 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FC, ReactNode, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "~/lib/hooks";
-import { initialize, setAuth } from "~/lib/store";
+import { clearAuth, initialize, setAuth } from "~/lib/store";
 import { me } from "~/services/auth";
-import { getToken } from "~/services/token";
+import { clearToken, getToken } from "~/services/token";
 
 export const AuthGuard: FC<{ children: ReactNode }> = ({ children }) => {
   const isInitialized = useAppSelector(store => store.initialized);
@@ -16,13 +16,19 @@ export const AuthGuard: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     async function populateStore() {
-      const user = await me();
+      try {
+        const user = await me();
 
-      if (token && user) {
-        dispatch(setAuth({ token, user }));
+        if (token && user) {
+          dispatch(setAuth({ token, user }));
+        }
+
+        dispatch(initialize());
+      } catch (e) {
+        dispatch(clearAuth());
+        clearToken();
+        dispatch(initialize());
       }
-
-      dispatch(initialize());
     }
 
     if (!isInitialized) {
@@ -30,9 +36,13 @@ export const AuthGuard: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [token, isInitialized, dispatch]);
 
-  if ("window" in globalThis && !token) {
-    redirect("/signin");
-  }
+  const router = useRouter();
+
+  useEffect(() => {
+    if ("window" in globalThis && !token) {
+      router.push("/signin");
+    }
+  }, [token, router]);
 
   return <>{children}</>;
 };
