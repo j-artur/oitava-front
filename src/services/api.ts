@@ -24,7 +24,10 @@ api.interceptors.response.use(
   res => res,
   error => {
     if (error instanceof AxiosError) {
-      return Promise.reject(error.response?.data ?? "Erro desconhecido");
+      return Promise.reject(
+        error.response?.data ??
+          "Algo inesperado aconteceu. Por favor, verifique os dados e tente novamente.",
+      );
     }
   },
 );

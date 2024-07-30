@@ -43,15 +43,11 @@ const SignIn: FC = () => {
   const signInMutation = useMutation({
     mutationKey: ["signIn"],
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      try {
-        const { accessToken: token } = await signIn(data);
-        storeToken(token);
-        const user = await me();
-        dispatch(setAuth({ user, token }));
-        router.push("/home");
-      } catch (e) {
-        // handle error
-      }
+      const { accessToken: token } = await signIn(data);
+      storeToken(token);
+      const user = await me();
+      dispatch(setAuth({ user, token }));
+      router.push("/home");
     },
   });
 
@@ -105,11 +101,7 @@ const SignIn: FC = () => {
               {signInMutation.isPending && <ActivityIndicator />}
               Entrar na conta
             </Button>
-            {signInMutation.isError && (
-              <Error>
-                Ocorreu um erro ao tentar acessar a conta. Verifique os dados e tente novamente.
-              </Error>
-            )}
+            {signInMutation.isError && <Error>{signInMutation.error.message}</Error>}
             <div className="flex justify-between">
               <Link href="/signup">
                 <Button variant="ghost" className="text-sm font-bold text-text-tertiary">

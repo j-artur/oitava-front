@@ -45,12 +45,8 @@ const SignUp: FC = () => {
   const signUpMutation = useMutation({
     mutationKey: ["signUp"],
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      try {
-        await signUp(data);
-        router.push("/signin");
-      } catch (e) {
-        // handle error
-      }
+      await signUp(data);
+      router.push("/signin");
     },
   });
 
@@ -120,9 +116,7 @@ const SignUp: FC = () => {
               {signUpMutation.isPending && <ActivityIndicator />}
               Finalizar cadastro
             </Button>
-            {signUpMutation.isError && (
-              <Error>Ocorreu um erro ao criar a conta. Verifique os dados e tente novamente.</Error>
-            )}
+            {signUpMutation.isError && <Error>{signUpMutation.error.message}</Error>}
             <Link href="/signin" className="flex w-full flex-col">
               <Button variant="destructive-ghost">Cancelar</Button>
             </Link>
