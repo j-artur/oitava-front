@@ -9,7 +9,6 @@ import { getToken } from "~/services/token";
 
 export const AuthGuard: FC<{ children: ReactNode }> = ({ children }) => {
   const isInitialized = useAppSelector(store => store.initialized);
-  const authSegment = useAppSelector(store => store.auth);
 
   const dispatch = useAppDispatch();
 

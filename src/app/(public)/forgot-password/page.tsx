@@ -5,15 +5,15 @@ import Link from "next/link";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { ControlledInput } from "~/components/controlled-input";
 import { Button } from "~/components/ui/button";
+import { ControlledInput } from "../controlled-input";
 
 const formSchema = z.object({
   code: z.string().min(6, "Código tem 6 dígitos"),
 });
 
 const ForgotPassword: FC = () => {
-  const { control, formState, handleSubmit } = useForm({
+  const { control, formState } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       code: "",

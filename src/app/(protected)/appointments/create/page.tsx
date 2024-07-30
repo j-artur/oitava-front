@@ -28,7 +28,7 @@ const formSchema = z.object({
 });
 
 export default function CreateAppointment() {
-  const { control, formState, getValues, handleSubmit } = useForm({
+  const { control, formState, handleSubmit } = useForm({
     defaultValues: {
       medicoId: null as unknown as number,
       pacienteId: null as unknown as number,

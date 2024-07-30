@@ -2,13 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
 import { z } from "zod";
-import { ControlledInput } from "~/components/controlled-input";
 import { Button } from "~/components/ui/button";
+import { ControlledInput } from "../controlled-input";
 
 const formSchema = z
   .object({
@@ -21,7 +20,7 @@ const formSchema = z
   });
 
 const ChangePassword: FC = () => {
-  const { control, formState, handleSubmit } = useForm({
+  const { control, formState } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       senha: "",
@@ -31,8 +30,6 @@ const ChangePassword: FC = () => {
     reValidateMode: "onChange",
   });
   const [showPassword, setShowPassword] = useState(false);
-
-  const router = useRouter();
 
   const noErrors = Object.keys(formState.errors).length === 0;
   const disabled = !noErrors || !formState.isDirty;
@@ -85,7 +82,6 @@ const ChangePassword: FC = () => {
             </Button>
           }
         />
-
         <div className="flex flex-col gap-2 py-4">
           <Link href="/signin" className="flex w-full flex-col">
             <Button type="submit" size="lg" className="text-md" disabled={disabled}>

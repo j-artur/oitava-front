@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
 import { z } from "zod";
 import { ActivityIndicator } from "~/components/activity-indicator";
-import { ControlledInput } from "~/components/controlled-input";
 import { Error } from "~/components/error";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -17,6 +16,7 @@ import { useAppDispatch } from "~/lib/hooks";
 import { setAuth } from "~/lib/store";
 import { me, signIn } from "~/services/auth";
 import { storeToken } from "~/services/token";
+import { ControlledInput } from "../controlled-input";
 
 const formSchema = z.object({
   email: z.string().email("E-mail inválido"),

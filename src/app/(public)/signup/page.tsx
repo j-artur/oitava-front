@@ -9,10 +9,10 @@ import { useForm } from "react-hook-form";
 import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
 import { z } from "zod";
 import { ActivityIndicator } from "~/components/activity-indicator";
-import { ControlledInput } from "~/components/controlled-input";
 import { Error } from "~/components/error";
 import { Button } from "~/components/ui/button";
 import { signUp } from "~/services/auth";
+import { ControlledInput } from "../controlled-input";
 
 const formSchema = z
   .object({
